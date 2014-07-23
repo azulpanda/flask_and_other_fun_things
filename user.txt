@@ -1,1 +1,1 @@
-[{"nonono@no.com": "!@#$1234QWERqwer"}, {"azulpanda@naver.com": "!@#$1234QWERqwer"}, {"meow@cat.com": "!@#$1234QWERqwer"}, {"bark@dog.com": "!@#$1234QWERqwer"}, {"quack@duck.com": "!@#$1234QWERqwer"}, {"squeak@mouse.com": "!@#$1234QWERqwer"}, {"howl@wolf.com": "!@#$1234QWERqwer"}]
+[{"password": "!@#$1234QWERqwer", "email": "bark@dog.com"}, {"password": "!@#$1234QWERqwer", "email": "meow@cat.com"}, {"password": "!@#$1234QWERqwer", "email": "tweet@bird.com"}, {"password": "!@#$1234QWERqwer", "email": "quack@duck.com"}, {"password": "!@#$1234QWERqwer", "email": "oink@pig.com"}]

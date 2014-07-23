@@ -72,9 +72,10 @@ def signup():
 			if read_file != "":
 				current_users = json.loads(read_file)
 			for i in current_users:
-				if request.form['email'] in i :
-					message = "Existing email"
-					go = False
+				if 'email' in i:
+					if request.form['email'] == i['email']:
+						message = "Existing email"
+						go = False
 		if go:	
 			if not re.match("^[a-zA-z._0-9]+@[a-zA-Z0-9-]+\.(com|net|ac\.kr)$", request.form['email'] ):
 				message = "Invalid email"
@@ -84,10 +85,11 @@ def signup():
 				message = "Passwords are different"
 			else: 
 				with open('user.txt', 'w') as users_list:
-					new_user = { request.form['email']:request.form['password'] }
+					new_user = { 'email':request.form['email'], 'password':request.form['password'] }
 					current_users.append(new_user)
 					users_list.write(json.dumps(current_users))
 					flash('You are signed up')
+					return redirect(url_for('show_entries'))
 
 	return render_template('signup.html', message = message)
 
@@ -103,14 +105,15 @@ def login():
 				if read_file != "":
 					current_users = json.loads(read_file)
 				for i in current_users:
-					if request.form['email'] in i:
-						match = True
-						if i[request.form['email']] == request.form['password']:
-							session['logged_in'] = True
-							flash('You are logged in')
-							return redirect(url_for('show_entries'))
-						else:
-							error = 'Invalid password'
+					if 'email' in i:
+						if request.form['email'] == i['email']:
+							match = True
+							if i['password'] == request.form['password']:
+								session['logged_in'] = True
+								flash('You are logged in')
+								return redirect(url_for('show_entries'))
+							else:
+								error = 'Invalid password'
 		if not match:
 			error = 'Invalid email. Sign up'
 	return render_template('login.html', error = error)
