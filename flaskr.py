@@ -1,9 +1,12 @@
 import os
 import sqlite3
+import re
+import json
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+users = []
 
 app.config.update(dict(
 	DATABASE=os.path.join(app.root_path, 'flaskr.db'),
@@ -55,18 +58,61 @@ def add_entry():
 	flash('New entry was successfully posted')
 	return redirect(url_for('show_entries'))
 
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+	message = None
+	current_users = []
+	go = True
+	if request.method == 'POST': 
+		if not os.path.isfile('user.txt'):
+			file = open('user.txt', 'w')
+			file.close()
+		with open('user.txt', 'r') as users_list:
+			read_file = users_list.read()
+			if read_file != "":
+				current_users = json.loads(read_file)
+			for i in current_users:
+				if request.form['email'] in i :
+					message = "Existing email"
+					go = False
+		if go:	
+			if not re.match("^[a-zA-z._0-9]+@[a-zA-Z0-9-]+\.(com|net|ac\.kr)$", request.form['email'] ):
+				message = "Invalid email"
+			elif not re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,20}$", request.form['password'] ):
+				message = "Invalid password"
+			elif request.form['password'] != request.form['password_check']:
+				message = "Passwords are different"
+			else: 
+				with open('user.txt', 'w') as users_list:
+					new_user = { request.form['email']:request.form['password'] }
+					current_users.append(new_user)
+					users_list.write(json.dumps(current_users))
+					flash('You are signed up')
+
+	return render_template('signup.html', message = message)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	error = None
+	current_users = []
+	match = False
 	if request.method == 'POST':
-		if request.form['username'] != app.config['USERNAME']:
-			error = 'Invalid username'
-		elif request.form['password'] != app.config['PASSWORD']:
-			error = 'Invalid password'
-		else:
-			session['logged_in'] = True
-			flash('You were logged in')
-			return redirect(url_for('show_entries'))
+		if os.path.isfile('user.txt'):
+			with open('user.txt', 'r') as users_list:
+				read_file = users_list.read()
+				if read_file != "":
+					current_users = json.loads(read_file)
+				for i in current_users:
+					if request.form['email'] in i:
+						match = True
+						if i[request.form['email']] == request.form['password']:
+							session['logged_in'] = True
+							flash('You are logged in')
+							return redirect(url_for('show_entries'))
+						else:
+							error = 'Invalid password'
+		if not match:
+			error = 'Invalid email. Sign up'
 	return render_template('login.html', error = error)
 
 @app.route('/logout')
