@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block body %}
+	<table>
+		<tr>
+			<th>Email</th>
+			<th>Password</th>
+			<th>Admin status</th>
+		</tr>
+	{% for i in user %}
+		<tr>
+			<td>{{ i['email'] }}</td>
+			<td>{{ i['password'] }}</td>
+			<td>{{ i['admin'] }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+{% endblock %}

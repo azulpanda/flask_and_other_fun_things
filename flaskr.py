@@ -84,12 +84,15 @@ def signup():
 			elif request.form['password'] != request.form['password_check']:
 				message = "Passwords are different"
 			else: 
+				if 'admin' in request.form:
+					new_user = { 'email':request.form['email'], 'password':request.form['password'], 'admin':True }
+				else:
+					new_user = { 'email':request.form['email'], 'password':request.form['password'], 'admin':False }
+				current_users.append(new_user)	
 				with open('user.txt', 'w') as users_list:
-					new_user = { 'email':request.form['email'], 'password':request.form['password'] }
-					current_users.append(new_user)
 					users_list.write(json.dumps(current_users))
-					flash('You are signed up')
-					return redirect(url_for('show_entries'))
+				flash('You are signed up')
+				return redirect(url_for('show_entries'))
 
 	return render_template('signup.html', message = message)
 
@@ -110,6 +113,8 @@ def login():
 							match = True
 							if i['password'] == request.form['password']:
 								session['logged_in'] = True
+								session['email'] = i['email']
+								session['admin'] = i['admin']
 								flash('You are logged in')
 								return redirect(url_for('show_entries'))
 							else:
@@ -121,8 +126,18 @@ def login():
 @app.route('/logout')
 def logout():
 	session.pop('logged_in', None)
+	session.pop('password', None)
+	session.pop('admin', None)
 	flash('You were logged out')
 	return redirect(url_for('show_entries'))
+
+@app.route('/user')
+def user():
+	user = []
+	with open('user.txt', 'r') as data:
+		user = json.loads(data.read())
+	return render_template('user.html', user = user)
+
 
 if __name__ == '__main__':
 	init_db()

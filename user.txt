@@ -1,1 +1,1 @@
-[{"password": "!@#$1234QWERqwer", "email": "bark@dog.com"}, {"password": "!@#$1234QWERqwer", "email": "meow@cat.com"}, {"password": "!@#$1234QWERqwer", "email": "tweet@bird.com"}, {"password": "!@#$1234QWERqwer", "email": "quack@duck.com"}, {"password": "!@#$1234QWERqwer", "email": "oink@pig.com"}]
+[{"admin": true, "password": "!@#$1234QWERqwer", "email": "oink@pig.com"}, {"admin": true, "password": "!@#$1234QWERqwer", "email": "meow@cat.com"}, {"admin": false, "password": "!@#$1234QWERqwer", "email": "quack@duck.com"}]
