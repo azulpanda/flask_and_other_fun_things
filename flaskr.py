@@ -43,19 +43,34 @@ def init_db():
 
 @app.route('/')
 def show_entries():
-	db = get_db()
-	cur = db.execute('select title, text from entries order by id desc')
-	entries = cur.fetchall()
+	entries = []
+	if not os.path.isfile('entry.txt'):
+		file = open('entry.txt', 'w')
+		file.close()
+	with open('entry.txt', 'r') as data:
+		entries_list = data.read()
+		if entries_list != "":
+			entries = json.loads(entries_list)
 	return render_template('show_entries.html', entries = entries)
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-	if not session.get('logged_in'):
+	if session['logged_in']:
+		entries = []
+		if not os.path.isfile('entry.txt'):
+			file = open('entry.txt', 'w')
+			file.close()
+		with open('entry.txt', 'r') as data:
+			entries_list = data.read()
+			if entries_list != "":
+				entries = json.loads(entries_list)
+		new_entry = { 'num':len(entries), 'title':request.form['title'], 'text':request.form['text'], 'email':session['email'] }
+		entries.append(new_entry)
+		with open('entry.txt', 'w') as data:
+			data.write(json.dumps(entries))
+		flash('New entry was successfully posted')
+	else:
 		abort(401)
-	db = get_db()
-	db.execute('insert into entries (title, text) values (?, ?)', [request.form['title'], request.form['text']])
-	db.commit()
-	flash('New entry was successfully posted')
 	return redirect(url_for('show_entries'))
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -67,10 +82,10 @@ def signup():
 		if not os.path.isfile('user.txt'):
 			file = open('user.txt', 'w')
 			file.close()
-		with open('user.txt', 'r') as users_list:
-			read_file = users_list.read()
-			if read_file != "":
-				current_users = json.loads(read_file)
+		with open('user.txt', 'r') as data:
+			users_list = data.read()
+			if users_list != "":
+				current_users = json.loads(users_list)
 			for i in current_users:
 				if 'email' in i:
 					if request.form['email'] == i['email']:
@@ -89,8 +104,8 @@ def signup():
 				else:
 					new_user = { 'email':request.form['email'], 'password':request.form['password'], 'admin':False }
 				current_users.append(new_user)	
-				with open('user.txt', 'w') as users_list:
-					users_list.write(json.dumps(current_users))
+				with open('user.txt', 'w') as data:
+					data.write(json.dumps(current_users))
 				flash('You are signed up')
 				return redirect(url_for('show_entries'))
 
@@ -103,10 +118,10 @@ def login():
 	match = False
 	if request.method == 'POST':
 		if os.path.isfile('user.txt'):
-			with open('user.txt', 'r') as users_list:
-				read_file = users_list.read()
-				if read_file != "":
-					current_users = json.loads(read_file)
+			with open('user.txt', 'r') as data:
+				users_list = data.read()
+				if users_list != "":
+					current_users = json.loads(users_list)
 				for i in current_users:
 					if 'email' in i:
 						if request.form['email'] == i['email']:
