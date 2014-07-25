@@ -9,13 +9,18 @@
 				<dd><textarea name="text" cols="40" rows="5"></textarea></dd>
 				<dd><input type="submit" value="Share"></dd>
 			</dl>
+			<ul class="entries">
+				{% for entry in entries %}
+				<li><h2>{{ entry.title }}</h2>{{ entry.text|safe }} 
+					{% if entry.email == session.email %} 
+					<a name={{ entry.num }} href="{{ url_for('show_entries') }}">change entry</a>
+					{% endif %}
+				</li>
+				{% else %}
+				<li><em>Unbelievable. No entries here so far</em></li>
+				{% endfor %}
+			</ul>
 		</form>
 	{% endif %}
-	<ul class="entries">
-	{% for entry in entries %}
-		<li><h2>{{ entry.title }}</h2>{{ entry.text|safe }}       {% if entry.email == session.email %} <a href="{{ url_for('change_entry') }}">change entry</a>{% endif %}</li>
-	{% else %}
-		<li><em>Unbelievable. No entries here so far</em></li>
-	{% endfor %}
-	</ul>
+	
 {% endblock %}
