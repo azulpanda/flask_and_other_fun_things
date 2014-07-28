@@ -1,0 +1,59 @@
+body{
+	font-family: sans-serif; background: #eee;
+}
+a, h1, h2{
+	color:#377ba8;
+}
+h1, h2{
+	font-family: 'Georgia', serif; margin: 0;
+}
+h1{
+	border-bottom: 2px solid #eee
+}
+h2{
+	font-size: 1.2em;
+}
+
+.page{
+	margin: 2em auto; width: 35em; border: 5px solid #ccc; padding: 0.8em; background: white;
+}
+.entries{
+	list-style: none; margin: 0; padding: 0;
+}
+.entries li{
+	margin: 0.8em 1.2em;
+}
+.entries li h2{
+	margin-left: -1em;
+}
+.add-entry{
+	font-size: 0.9em; border-bottom: 1px solid #ccc;
+}
+.add-entry dl{
+	font-weight: bold;
+}
+.metanav{
+	text-align: right; font-size: 0.8em; padding: 0.3em; margin-bottom: 1em; background: #fafafa;
+}
+.flash{
+	background: #cee5F5; padding: 0.5em; border: 1px slid #aacbe2;
+}
+.error{
+	background: #f0d6d6; padding: 0.5em;
+}
+
+.user th{
+	color:#ffffff; background-color:#555555; border:1px solid #555555; padding:3px; vertical-align:middle; text-align:left;
+}
+
+.user td{
+	border:1px solid #d4d4d4; padding:5px; padding-top:7px; padding-bottom:7px; vertical-align:top;
+}
+
+.invalid{
+	border-color: red;
+}
+
+.input_error{
+	color: red; display: none; font-size:12px;
+}
