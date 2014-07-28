@@ -7,6 +7,7 @@
 			<dt>Email:</dt>
 			<dd><input type="text" name="email" id="email_input"></dd>
 			<dd class="input_error" id="email_error">Invalid email</dd>
+			<dd class="input_error" id="email_taken">Email already taken</dd>
 			<dt>Password:</dt>
 			<dd><input type="password" name="password" id="password_input"></dd>
 			<dd class="input_error" id="password_error">Invalid password</dd>
@@ -17,50 +18,6 @@
 			<dd><input type="checkbox" name="admin"></dd>
 			<dd><input type="submit" value="Sign up"></dd>
 		</dl>
-		<script type="text/javascript">
-			var email_input = document.getElementById("email_input");
-			var password_input = document.getElementById("password_input");
-			var password_check_input = document.getElementById("password_check_input");
-			email_input.onblur = function(){
-				var email = email_input.value;
-				if (Boolean(email.match(/^[a-zA-z._0-9]+@[a-zA-Z0-9-]+\.(com|net|ac\.kr)$/)))
-				{
-					email_input.removeAttribute("class");
-					document.getElementById("email_error").style.display = "none";
-				}
-				else
-				{
-					email_input.setAttribute('class', 'invalid');
-					document.getElementById("email_error").style.display = "inline";
-				}
-			};
-			password_input.onblur = function(){
-				var password = password_input.value;
-				if (Boolean(password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,20}$/)))
-				{
-					password_input.removeAttribute("class");
-					document.getElementById("password_error").style.display = "none";
-				}
-				else
-				{
-					password_input.setAttribute('class', 'invalid');
-					document.getElementById("password_error").style.display = "inline";
-				}
-			};
-			password_check_input.onblur = function(){
-				var password = password_input.value;
-				var password_check = password_check_input.value;
-				if (password === password_check)
-				{
-					password_check_input.removeAttribute("class");
-					document.getElementById("password_check_error").style.display = "none";
-				}
-				else
-				{
-					password_check_input.setAttribute('class', 'invalid');
-					document.getElementById("password_check_error").style.display = "inline";
-				}
-			}
-		</script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/check_form.js') }}"></script>
 	</form>
 {% endblock %}

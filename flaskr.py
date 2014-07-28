@@ -41,6 +41,17 @@ def init_db():
 			db.cursor().executescript(f.read())
 		db.commit()
 
+def get_user():
+	user = []
+	if not os.path.isfile('user.txt'):
+			file = open('user.txt', 'w')
+			file.close()
+	with open('user.txt', 'r') as data:
+		read_file = data.read()
+		if read_file != "":
+			user = json.loads(read_file)
+	return user
+
 @app.route('/')
 def show_entries():
 	entries = []
@@ -79,18 +90,12 @@ def signup():
 	current_users = []
 	go = True
 	if request.method == 'POST': 
-		if not os.path.isfile('user.txt'):
-			file = open('user.txt', 'w')
-			file.close()
-		with open('user.txt', 'r') as data:
-			users_list = data.read()
-			if users_list != "":
-				current_users = json.loads(users_list)
-			for i in current_users:
-				if 'email' in i:
-					if request.form['email'] == i['email']:
-						message = "Existing email"
-						go = False
+		user = get_user()
+		for i in user:
+			if 'email' in i:
+				if request.form['email'] == i['email']:
+					message = "Existing email"
+					go = False
 		if go:	
 			if not re.match("^[a-zA-z._0-9]+@[a-zA-Z0-9-]+\.(com|net|ac\.kr)$", request.form['email'] ):
 				message = "Invalid email"
@@ -114,27 +119,21 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	error = None
-	current_users = []
-	match = False
+	user = []
 	if request.method == 'POST':
-		if os.path.isfile('user.txt'):
-			with open('user.txt', 'r') as data:
-				users_list = data.read()
-				if users_list != "":
-					current_users = json.loads(users_list)
-				for i in current_users:
-					if 'email' in i:
-						if request.form['email'] == i['email']:
-							match = True
-							if i['password'] == request.form['password']:
-								session['logged_in'] = True
-								session['email'] = i['email']
-								session['admin'] = i['admin']
-								flash('You are logged in')
-								return redirect(url_for('show_entries'))
-							else:
-								error = 'Invalid password'
-		if not match:
+		user = get_user()
+		for i in user:
+			if request.form['email'] == i['email']:
+				if i['password'] == request.form['password']:
+					session['logged_in'] = True
+					session['email'] = i['email']
+					session['admin'] = i['admin']
+					flash('You are logged in')
+					return redirect(url_for('show_entries'))
+				else:
+					error = 'Invalid password'
+				break
+		else:
 			error = 'Invalid email. Sign up'
 	return render_template('login.html', error = error)
 
@@ -149,10 +148,25 @@ def logout():
 @app.route('/user')
 def user():
 	user = []
+	if not os.path.isfile('user.txt'):
+			file = open('user.txt', 'w')
+			file.close()
 	with open('user.txt', 'r') as data:
-		user = json.loads(data.read())
+		read_file = data.read()
+		if read_file != "":
+			user = json.loads(read_file)
 	return render_template('user.html', user = user)
 
+@app.route('/email_check', methods=['POST'])
+def email_check():
+	print 'hi'
+	email = request.form['email']
+	user = get_user()
+	result = ""
+	for i in user:
+		if email == i['email']:
+			result = "taken"
+	return result
 
 if __name__ == '__main__':
 	init_db()
